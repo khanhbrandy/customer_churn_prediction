@@ -1,0 +1,317 @@
+<!--
+   Created by: Ngoc Khanh Trinh
+-->
+<!DOCTYPE html>
+<html>
+
+<head>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+   <style>
+      body {
+         font-family: Arial;
+         font-size: 17px;
+         padding: 8px;
+      }
+
+      * {
+         box-sizing: border-box;
+      }
+
+      h2,
+      p {
+         text-align: center;
+      }
+
+      .row {
+         display: -ms-flexbox;
+         /* IE10 */
+         display: flex;
+         -ms-flex-wrap: wrap;
+         /* IE10 */
+         flex-wrap: wrap;
+         margin: 0 -16px;
+      }
+
+      .col-25 {
+         -ms-flex: 25%;
+         /* IE10 */
+         flex: 25%;
+      }
+
+      .col-50 {
+         -ms-flex: 50%;
+         /* IE10 */
+         flex: 50%;
+      }
+
+      .col-50 h3 {
+         text-align: center;
+      }
+
+      .col-50 h1 {
+         margin: 20% auto 5% auto;
+         font-size: 7em;
+         color: #00519c;
+         text-align: center;
+      }
+
+      .col-50 h2 {
+         font-size: 2.5em;
+      }
+
+      .col-75 {
+         -ms-flex: 75%;
+         /* IE10 */
+         flex: 75%;
+      }
+
+      .col-25,
+      .col-50,
+      .col-75 {
+         padding: 0 16px;
+      }
+
+      .container {
+         background-color: #f2f2f2;
+         padding: 5px 20px 15px 20px;
+         border: 1px solid lightgrey;
+         border-radius: 3px;
+      }
+
+      input[type=text],
+      input[type=number],
+      select {
+         width: 100%;
+         margin-bottom: 20px;
+         padding: 12px;
+         border: 1px solid #ccc;
+         border-radius: 3px;
+      }
+
+      label {
+         margin-bottom: 10px;
+         display: block;
+      }
+
+      .icon-container {
+         margin-bottom: 20px;
+         padding: 7px 0;
+         font-size: 24px;
+      }
+
+      .btn {
+         background-color: #1b76a7;
+         color: white;
+         padding: 12px;
+         margin: 10px auto auto 5%;
+         border: none;
+         width: 40%;
+         border-radius: 3px;
+         cursor: pointer;
+         font-size: 17px;
+      }
+
+      .btn:hover {
+         background-color: #00519c;
+      }
+
+      a {
+         color: #2196F3;
+      }
+
+      hr {
+         border: 1px solid lightgrey;
+      }
+
+      span.price {
+         float: right;
+         color: grey;
+      }
+
+
+      @media (max-width: 800px) {
+         .row {
+            flex-direction: column-reverse;
+         }
+
+         .col-25 {
+            margin-bottom: 20px;
+         }
+      }
+   </style>
+   <script>
+      const onPredict = async () => {
+         // Get keywords
+         const account_length = parseFloat(document.getElementById("account_length").value);
+         const number_vmail_messages = parseFloat(document.getElementById("number_vmail_messages").value);
+         const total_day_minutes = parseFloat(document.getElementById("total_day_minutes").value);
+         const total_day_calls = parseFloat(document.getElementById("total_day_calls").value);
+         const total_eve_minutes = parseFloat(document.getElementById("total_eve_minutes").value);
+         const total_eve_calls = parseFloat(document.getElementById("total_eve_calls").value);
+         const total_night_minutes = parseFloat(document.getElementById("total_night_minutes").value);
+         const total_night_calls = parseFloat(document.getElementById("total_night_calls").value);
+         const total_intl_minutes = parseFloat(document.getElementById("total_intl_minutes").value);
+         const total_intl_calls = parseFloat(document.getElementById("total_intl_calls").value);
+         const number_customer_service_calls = parseFloat(document.getElementById("number_customer_service_calls").value);
+         const international_plan_yes = parseInt(document.getElementById("international_plan_yes").value);
+         const voice_mail_plan_yes = parseInt(document.getElementById("voice_mail_plan_yes").value);
+
+         var url = `https://datapot.vn/services/churn/predict`
+         console.log(url)
+         // Fetch API
+         try {
+            const res = await fetch(url, {
+               method: 'POST',
+               body: JSON.stringify({
+                  account_length,
+                  number_vmail_messages,
+                  total_day_minutes,
+                  total_day_calls,
+                  total_eve_minutes,
+                  total_eve_calls,
+                  total_night_minutes,
+                  total_night_calls,
+                  total_intl_minutes,
+                  total_intl_calls,
+                  number_customer_service_calls,
+                  international_plan_yes,
+                  voice_mail_plan_yes
+               }),
+               headers: {
+                  'Access-Control-Allow-Origin': '*',
+                  'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
+               }
+            })
+            const result = await res.json();
+            var percentage = result.prob * 100
+            document.getElementById("prob").innerHTML = `${percentage.toFixed(0)}%`;
+            document.getElementById("label").innerHTML = result.label;
+         }
+         catch (err) {
+            console.log("ERROR: ", err)
+         }
+      }
+   </script>
+   <title>CSIS 3290: Term Project</title>
+</head>
+
+<body>
+
+   <h2>Customer Churn Prediction Model</h2>
+   <div class="row">
+      <div class="col-75">
+         <div class="container">
+            <form>
+
+               <div class="row">
+                  <div class="col-50">
+                     <h3>Customer Information</h3>
+                     <div class="row">
+                        <div class="col-50">
+                           <label for="account_length">Account length</label>
+                           <input type="number" id="account_length" name="account_length"
+                              placeholder="Age of account in months">
+                        </div>
+                        <div class="col-50">
+                           <label for="number_vmail_messages">Number Vmail Messages</label>
+                           <input type="number" id="number_vmail_messages" name="number_vmail_messages"
+                              placeholder="Number of VM messages customer currently has">
+                        </div>
+                     </div>
+
+                     <div class="row">
+                        <div class="col-50">
+                           <label for="total_day_minutes">Total Day Minutes</label>
+                           <input type="number" id="total_day_minutes" name="total_day_minutes"
+                              placeholder="Customers total usage of day minutes in plan">
+                        </div>
+                        <div class="col-50">
+                           <label for="total_day_calls">Total Day Calls</label>
+                           <input type="number" id="total_day_calls" name="total_day_calls"
+                              placeholder="Total number of calls customer made in the day">
+                        </div>
+                     </div>
+
+                     <div class="row">
+                        <div class="col-50">
+                           <label for="total_eve_minutes">Total Evening Minutes</label>
+                           <input type="number" id="total_eve_minutes" name="total_eve_minutes"
+                              placeholder="Customers total usage of evening minutes in plan">
+                        </div>
+                        <div class="col-50">
+                           <label for="total_eve_calls">Total Evening Calls</label>
+                           <input type="number" id="total_eve_calls" name="total_eve_calls"
+                              placeholder="Total number of calls customer made in the evening">
+                        </div>
+                     </div>
+
+                     <div class="row">
+                        <div class="col-50">
+                           <label for="total_night_minutes">Total Night Minutes</label>
+                           <input type="number" id="total_night_minutes" name="total_night_minutes"
+                              placeholder="Customers total usage of night minutes in plan">
+                        </div>
+                        <div class="col-50">
+                           <label for="total_night_calls">Total Night Calls</label>
+                           <input type="number" id="total_night_calls" name="total_night_calls"
+                              placeholder="Total number of calls customer made at night">
+                        </div>
+                     </div>
+
+                     <div class="row">
+                        <div class="col-50">
+                           <label for="total_intl_minutes">Total International Minutes</label>
+                           <input type="number" id="total_intl_minutes" name="total_intl_minutes"
+                              placeholder="Total international minutes">
+                        </div>
+                        <div class="col-50">
+                           <label for="total_intl_calls">Total International Calls</label>
+                           <input type="number" id="total_intl_calls" name="total_intl_calls"
+                              placeholder="Total number of international calls">
+                        </div>
+                     </div>
+
+                     <div class="row">
+                        <div class="col-50">
+                           <label for="number_customer_service_calls">Total Customer Service Calls</label>
+                           <input type="number" id="number_customer_service_calls" name="number_customer_service_calls"
+                              placeholder="Total number of customer service calls">
+                        </div>
+                        <div class="col-50">
+                           <div class="row">
+                              <div class="col-50">
+                                 <label for="international_plan_yes">International Plan</label>
+                                 <select id="international_plan_yes">
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                 </select>
+                              </div>
+                              <div class="col-50">
+                                 <label for="voice_mail_plan_yes">Voicemail Plan</label>
+                                 <select id="voice_mail_plan_yes">
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                 </select>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+
+                  <div class="col-50">
+                     <h3>Predicted Result</h3>
+                     <h1 id="prob">Probability</h1>
+                     <h2 id="label">Label</h2>
+
+                  </div>
+                  <button class="btn" type="button" onclick="onPredict()"> Predict </button>
+                  <!-- <input type="submit" value="Predict" class="btn"> -->
+            </form>
+         </div>
+      </div>
+   </div>
+
+</body>
+
+</html>
